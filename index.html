@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROBUX GENERATOR</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+
+    background: linear-gradient(
+        135deg,
+        #063d18,
+        #08a63c,
+        #42e875,
+        #08752b
+    );
+
+    background-size: 400% 400%;
+    animation: backgroundMove 10s ease infinite;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes backgroundMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    width: 92%;
+    max-width: 600px;
+    text-align: center;
+    position: relative;
+    z-index: 100;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+h1 {
+    font-size: clamp(42px, 11vw, 75px);
+    font-weight: 1000;
+    margin-bottom: 40px;
+
+    text-shadow:
+        4px 4px 0 #064d1c,
+        0 0 20px rgba(255,255,255,.3);
+}
+
+h2 {
+    font-size: clamp(24px, 7vw, 40px);
+    margin-bottom: 25px;
+    text-shadow: 3px 3px 0 #064d1c;
+}
+
+button {
+    position: relative;
+    z-index: 9999;
+
+    border: none;
+    border-radius: 14px;
+
+    padding: 17px 30px;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    background: white;
+    color: #08752b;
+
+    box-shadow: 0 6px 0 #064d1c;
+
+    transition: transform .15s, box-shadow .15s;
+
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+button:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #064d1c;
+}
+
+.username-input {
+    display: block;
+
+    position: relative;
+    z-index: 99999;
+
+    width: 90%;
+    max-width: 420px;
+    height: 58px;
+
+    margin: 20px auto;
+
+    padding: 15px 18px;
+
+    border: 3px solid white;
+    border-radius: 14px;
+
+    background: white;
+    color: black;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 19px;
+
+    text-align: center;
+
+    outline: none;
+
+    pointer-events: auto;
+    touch-action: manipulation;
+
+    -webkit-user-select: text;
+    user-select: text;
+
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.username-input:focus {
+    border-color: #064d1c;
+
+    box-shadow:
+        0 0 0 4px rgba(255,255,255,.35),
+        0 0 20px rgba(255,255,255,.8);
+}
+
+.username-input::placeholder {
+    color: #777;
+    opacity: 1;
+}
+
+.amounts {
+    width: 100%;
+    max-width: 430px;
+
+    margin: 25px auto;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 14px;
+}
+
+.amount {
+    width: 100%;
+}
+
+.amount.selected {
+    background: #064d1c;
+    color: white;
+
+    box-shadow:
+        0 6px 0 #021d0a,
+        0 0 15px rgba(255,255,255,.3);
+}
+
+.error {
+    min-height: 24px;
+
+    margin: 5px 0 15px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    color: white;
+}
+
+.loading {
+    width: 90px;
+    height: 90px;
+
+    margin: 35px auto 20px;
+
+    position: relative;
+
+    animation: spin 1.1s linear infinite;
+}
+
+.dot {
+    position: absolute;
+
+    width: 12px;
+    height: 12px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    left: 39px;
+    top: 0;
+
+    transform-origin: 6px 45px;
+}
+
+.dot:nth-child(1) { transform: rotate(0deg); }
+.dot:nth-child(2) { transform: rotate(45deg); }
+.dot:nth-child(3) { transform: rotate(90deg); }
+.dot:nth-child(4) { transform: rotate(135deg); }
+.dot:nth-child(5) { transform: rotate(180deg); }
+.dot:nth-child(6) { transform: rotate(225deg); }
+.dot:nth-child(7) { transform: rotate(270deg); }
+.dot:nth-child(8) { transform: rotate(315deg); }
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.status {
+    font-size: 27px;
+    font-weight: bold;
+}
+
+.money {
+    font-size: 90px;
+
+    margin: 25px;
+
+    animation:
+        bounce 1s ease-in-out infinite alternate;
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0) rotate(-5deg);
+    }
+
+    to {
+        transform: translateY(-12px) rotate(5deg);
+    }
+}
+
+.floating {
+    position: fixed;
+
+    z-index: 1;
+
+    font-size: 35px;
+
+    opacity: .35;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    animation:
+        floating 4s ease-in-out infinite alternate;
+}
+
+@keyframes floating {
+    from {
+        transform: translateY(-20px) rotate(-10deg);
+    }
+
+    to {
+        transform: translateY(20px) rotate(10deg);
+    }
+}
+
+.icon1 { top: 8%; left: 8%; }
+.icon2 { top: 18%; right: 10%; }
+.icon3 { bottom: 15%; left: 12%; }
+.icon4 { bottom: 8%; right: 15%; }
+.icon5 { top: 50%; left: 3%; }
+.icon6 { top: 65%; right: 4%; }
+.icon7 { top: 10%; left: 48%; }
+</style>
+</head>
+
+<body>
+
+<div class="floating icon1">🤑</div>
+<div class="floating icon2">💰</div>
+<div class="floating icon3">🤑</div>
+<div class="floating icon4">💵</div>
+<div class="floating icon5">🤑</div>
+<div class="floating icon6">💰</div>
+<div class="floating icon7">🤑</div>
+
+<div class="container">
+
+    <div id="home" class="screen active">
+
+        <h1 data-text="title">
+            ROBUX GENERATOR
+        </h1>
+
+        <button
+            onclick="showUsername()"
+            data-text="getRobux"
+        >
+            Get ROBUX
+        </button>
+
+    </div>
+
+
+    <div id="usernameScreen" class="screen">
+
+        <h2 data-text="usernameTitle">
+            ENTER YOUR USERNAME
+        </h2>
+
+        <input
+            id="username"
+            class="username-input"
+            type="text"
+            inputmode="text"
+            placeholder="Enter your username"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+        >
+
+        <div id="usernameError" class="error"></div>
+
+        <button
+            onclick="continueToAmounts()"
+            data-text="continue"
+        >
+            Continue
+        </button>
+
+    </div>
+
+
+    <div id="amountScreen" class="screen">
+
+        <h2 data-text="amountTitle">
+            SELECT AN AMOUNT
+        </h2>
+
+        <div class="amounts">
+
+            <button class="amount" onclick="selectAmount(this,400)">
+                400
+            </button>
+
+            <button class="amount" onclick="selectAmount(this,800)">
+                800
+            </button>
+
+            <button class="amount" onclick="selectAmount(this,1700)">
+                1700
+            </button>
+
+            <button class="amount" onclick="selectAmount(this,4500)">
+                4500
+            </button>
+
+            <button class="amount" onclick="selectAmount(this,10000)">
+                10000
+            </button>
+
+            <button class="amount" onclick="selectAmount(this,22000)">
+                22000
+            </button>
+
+        </div>
+
+        <div id="amountError" class="error"></div>
+
+        <button
+            onclick="generate()"
+            data-text="generate"
+        >
+            Generate
+        </button>
+
+    </div>
+
+
+    <div id="loadingScreen" class="screen">
+
+        <div class="loading">
+
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+
+        </div>
+
+        <div
+            class="status"
+            data-text="loading"
+        >
+            Loading..
+        </div>
+
+    </div>
+
+
+    <div id="successScreen" class="screen">
+
+        <h2 data-text="success">
+            ROBUX GENERATED<br>
+            SUCCESSFULLY
+        </h2>
+
+        <div class="money">
+            🤑
+        </div>
+
+        <button
+            onclick="added()"
+            data-text="add"
+        >
+            ADD INTO YOUR ACCOUNT
+        </button>
+
+    </div>
+
+
+    <div id="addedScreen" class="screen">
+
+        <h2 data-text="added">
+            ADDED SUCCESSFULLY!
+        </h2>
+
+        <div class="money">
+            🤑
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const translations = {
+
+en: {
+title:"ROBUX GENERATOR",
+getRobux:"Get ROBUX",
+usernameTitle:"ENTER YOUR USERNAME",
+usernamePlaceholder:"Enter your username",
+continue:"Continue",
+amountTitle:"SELECT AN AMOUNT",
+generate:"Generate",
+loading:"Loading..",
+success:"ROBUX GENERATED<br>SUCCESSFULLY",
+add:"ADD INTO YOUR ACCOUNT",
+added:"ADDED SUCCESSFULLY!",
+usernameError:"ENTER YOUR USERNAME!",
+amountError:"SELECT AN AMOUNT FIRST!"
+},
+
+es: {
+title:"GENERADOR DE ROBUX",
+getRobux:"OBTENER ROBUX",
+usernameTitle:"INTRODUCE TU NOMBRE DE USUARIO",
+usernamePlaceholder:"Introduce tu nombre de usuario",
+continue:"Continuar",
+amountTitle:"SELECCIONA UNA CANTIDAD",
+generate:"Generar",
+loading:"Cargando..",
+success:"ROBUX GENERADOS<br>CON ÉXITO",
+add:"AÑADIR A TU CUENTA",
+added:"¡AÑADIDO CON ÉXITO!",
+usernameError:"¡INTRODUCE TU NOMBRE DE USUARIO!",
+amountError:"¡SELECCIONA UNA CANTIDAD PRIMERO!"
+},
+
+fr: {
+title:"GÉNÉRATEUR DE ROBUX",
+getRobux:"OBTENIR DES ROBUX",
+usernameTitle:"ENTREZ VOTRE NOM D’UTILISATEUR",
+usernamePlaceholder:"Votre nom d’utilisateur",
+continue:"Continuer",
+amountTitle:"SÉLECTIONNEZ UN MONTANT",
+generate:"Générer",
+loading:"Chargement..",
+success:"ROBUX GÉNÉRÉS<br>AVEC SUCCÈS",
+add:"AJOUTER À VOTRE COMPTE",
+added:"AJOUTÉ AVEC SUCCÈS !",
+usernameError:"ENTREZ VOTRE NOM D’UTILISATEUR !",
+amountError:"SÉLECTIONNEZ D’ABORD UN MONTANT !"
+},
+
+de: {
+title:"ROBUX-GENERATOR",
+getRobux:"ROBUX ERHALTEN",
+usernameTitle:"GIB DEINEN BENUTZERNAMEN EIN",
+usernamePlaceholder:"Dein Benutzername",
+continue:"Weiter",
+amountTitle:"BETRAG AUSWÄHLEN",
+generate:"Generieren",
+loading:"Wird geladen..",
+success:"ROBUX ERFOLGREICH<br>GENERIERT",
+add:"ZU DEINEM KONTO HINZUFÜGEN",
+added:"ERFOLGREICH HINZUGEFÜGT!",
+usernameError:"GIB DEINEN BENUTZERNAMEN EIN!",
+amountError:"WÄHLE ZUERST EINEN BETRAG!"
+},
+
+pt: {
+title:"GERADOR DE ROBUX",
+getRobux:"OBTER ROBUX",
+usernameTitle:"DIGITE SEU NOME DE USUÁRIO",
+usernamePlaceholder:"Seu nome de usuário",
+continue:"Continuar",
+amountTitle:"SELECIONE UMA QUANTIDADE",
+generate:"Gerar",
+loading:"Carregando..",
+success:"ROBUX GERADOS<br>COM SUCESSO",
+add:"ADICIONAR À SUA CONTA",
+added:"ADICIONADO COM SUCESSO!",
+usernameError:"DIGITE SEU NOME DE USUÁRIO!",
+amountError:"SELECIONE UMA QUANTIDADE PRIMEIRO!"
+},
+
+it: {
+title:"GENERATORE DI ROBUX",
+getRobux:"OTTIENI ROBUX",
+usernameTitle:"INSERISCI IL TUO NOME UTENTE",
+usernamePlaceholder:"Il tuo nome utente",
+continue:"Continua",
+amountTitle:"SELEZIONA UNA QUANTITÀ",
+generate:"Genera",
+loading:"Caricamento..",
+success:"ROBUX GENERATI<br>CON SUCCESSO",
+add:"AGGIUNGI AL TUO ACCOUNT",
+added:"AGGIUNTO CON SUCCESSO!",
+usernameError:"INSERISCI IL TUO NOME UTENTE!",
+amountError:"SELEZIONA PRIMA UNA QUANTITÀ!"
+},
+
+ja: {
+title:"ROBUXジェネレーター",
+getRobux:"ROBUXを取得",
+usernameTitle:"ユーザー名を入力",
+usernamePlaceholder:"ユーザー名",
+continue:"続行",
+amountTitle:"数量を選択",
+generate:"生成",
+loading:"読み込み中..",
+success:"ROBUXの生成に<br>成功しました",
+add:"アカウントに追加",
+added:"追加に成功しました！",
+usernameError:"ユーザー名を入力してください！",
+amountError:"最初に数量を選択してください！"
+},
+
+ko: {
+title:"ROBUX 생성기",
+getRobux:"ROBUX 받기",
+usernameTitle:"사용자 이름 입력",
+usernamePlaceholder:"사용자 이름",
+continue:"계속",
+amountTitle:"수량 선택",
+generate:"생성",
+loading:"로드 중..",
+success:"ROBUX 생성<br>성공",
+add:"계정에 추가",
+added:"성공적으로 추가되었습니다!",
+usernameError:"사용자 이름을 입력하세요!",
+amountError:"먼저 수량을 선택하세요!"
+},
+
+zh: {
+title:"ROBUX 生成器",
+getRobux:"获取 ROBUX",
+usernameTitle:"输入你的用户名",
+usernamePlaceholder:"输入用户名",
+continue:"继续",
+amountTitle:"选择数量",
+generate:"生成",
+loading:"加载中..",
+success:"ROBUX 生成<br>成功",
+add:"添加到你的账户",
+added:"添加成功！",
+usernameError:"请输入你的用户名！",
+amountError:"请先选择数量！"
+}
+
+};
+
+
+/* IDIOMA */
+
+const browserLanguage =
+(navigator.language || "en")
+.toLowerCase()
+.split("-")[0];
+
+const language =
+translations[browserLanguage]
+? browserLanguage
+: "en";
+
+const t = translations[language];
+
+document.documentElement.lang = language;
+
+
+/* TRADUCIR */
+
+document
+.querySelectorAll("[data-text]")
+.forEach(element => {
+
+    const key =
+        element.getAttribute("data-text");
+
+    if (t[key]) {
+        element.innerHTML = t[key];
+    }
+
+});
+
+
+document
+.getElementById("username")
+.placeholder =
+t.usernamePlaceholder;
+
+
+/* NAVEGACIÓN */
+
+function showScreen(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+            screen.classList.remove("active");
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+}
+
+
+/* USERNAME */
+
+function showUsername() {
+
+    document
+        .getElementById("username")
+        .value = "";
+
+    document
+        .getElementById("usernameError")
+        .textContent = "";
+
+    showScreen("usernameScreen");
+
+    setTimeout(() => {
+
+        document
+            .getElementById("username")
+            .focus();
+
+    }, 100);
+
+}
+
+
+function continueToAmounts() {
+
+    const input =
+        document.getElementById("username");
+
+    const username =
+        input.value.trim();
+
+    const error =
+        document.getElementById("usernameError");
+
+
+    if (!username) {
+
+        error.textContent =
+            t.usernameError;
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    error.textContent = "";
+
+    showScreen("amountScreen");
+
+}
+
+
+/* AMOUNTS */
+
+let selectedAmount = null;
+
+
+function selectAmount(button, amount) {
+
+    document
+        .querySelectorAll(".amount")
+        .forEach(btn => {
+
+            btn.classList.remove("selected");
+
+        });
+
+
+    button.classList.add("selected");
+
+    selectedAmount = amount;
+
+
+    document
+        .getElementById("amountError")
+        .textContent = "";
+
+}
+
+
+/* GENERATE */
+
+function generate() {
+
+    if (!selectedAmount) {
+
+        document
+            .getElementById("amountError")
+            .textContent =
+                t.amountError;
+
+        return;
+
+    }
+
+
+    showScreen("loadingScreen");
+
+
+    const seconds =
+        35.67 +
+        Math.random() *
+        (55.76 - 35.67);
+
+
+    setTimeout(() => {
+
+        showScreen("successScreen");
+
+    }, seconds * 1000);
+
+}
+
+
+/* FINAL */
+
+function added() {
+
+    showScreen("addedScreen");
+
+}
+
+</script>
+
+</body>
+</html>
